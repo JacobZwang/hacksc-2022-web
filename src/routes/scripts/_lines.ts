@@ -11,8 +11,8 @@ export function findLineWraps(textElement, lineHeight): WrappedLine[] {
 			} else {
 				lines.push({
 					top: rect.top + window.scrollY,
-					// bottom: rect.bottom + window.scrollY,
-					bottom: rect.top + lineHeight / 2,
+					bottom: rect.bottom + window.scrollY,
+					// bottom: rect.top + lineHeight / 2,
 					wordCount: 1,
 					lastWordIndex: i,
 					firstWordIndex: i
