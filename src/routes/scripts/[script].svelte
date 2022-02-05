@@ -13,6 +13,7 @@
 <script lang="ts">
 	import { io } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
+	import { findLineWraps, WrappedLine } from './_lines';
 	import temp from './_temp.txt?raw';
 
 	// import temp from './_temp.txt?raw';
@@ -30,7 +31,7 @@
 
 	let activeWordNumber = 0;
 	let textElement: HTMLDivElement;
-	let softLines = [];
+	let softLines: WrappedLine;
 	let lineHeight = 60;
 	let text;
 
@@ -54,61 +55,15 @@
 			text = data.text;
 			connectionStatus = ConnectionStatus.JoinedRoom;
 			await tick();
-			softLines = findLineWraps();
+			softLines = findLineWraps(textElement, lineHeight);
 		});
 	});
-
-	function findLineWraps() {
-		return Array.from(textElement.children).reduce(
-			(lines, word, i) => {
-				const lastLine = lines[lines.length - 1];
-				const rect = word.getBoundingClientRect();
-				const wordHeight = rect.bottom - rect.top;
-
-				if (lastLine.top === word.getBoundingClientRect().top + window.scrollY) {
-					lastLine.wordCount += 1;
-					lastLine.lastWordIndex = i;
-					// if (lastLine.lineHeight < wordHeight) {
-					// 	lastLine.lineHeight = wordHeight;
-					// }
-				} else {
-					lines.push({
-						top: rect.top + window.scrollY,
-						// bottom: rect.bottom + window.scrollY,
-						bottom: rect.top + lineHeight,
-						wordCount: 0, // ! word count is zero indexed!
-						lastWordIndex: i,
-						firstWordIndex: i,
-						lineHeight: wordHeight
-					});
-				}
-
-				return lines;
-			},
-			[
-				{
-					top: textElement.children[0].getBoundingClientRect().top + window.scrollY,
-					// bottom: textElement.children[0].getBoundingClientRect().bottom + window.scrollY,
-					bottom:
-						textElement.children[0].getBoundingClientRect().top +
-						window.scrollY +
-						lineHeight,
-					wordCount: -1, // first word is word 0
-					lastWordIndex: 0,
-					firstWordIndex: 0,
-					lineHeight: 0
-				}
-			]
-		);
-	}
 </script>
 
 <svelte:window
 	on:scroll={(e) => {
-		// activeWordNumber = Math.floor((window.scrollY / (40 * 1.5)) * 7);
 		const offset = softLines[0].top;
 		const currentLine = softLines.find((line) => {
-			// console.log(line, window.scrollY);
 			return line.top >= window.scrollY + offset && line.bottom >= window.scrollY + offset;
 		});
 
@@ -118,7 +73,7 @@
 				currentLine.wordCount *
 					(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
 			);
-		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
+		// console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
 	on:resize={() => {
 		softLines = findLineWraps();
