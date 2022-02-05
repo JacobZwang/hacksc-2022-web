@@ -5,11 +5,11 @@
 		console.log('Data', event, data);
 	});
 
-	const fileInput = document.getElementById('input') as HTMLInputElement;
-	fileInput.onchange = () => {
-		const selectedFile = fileInput.files[0];
-		console.log(selectedFile);
-	};
+	//const fileInput = document.getElementById('input') as HTMLInputElement;
+	// fileInput.onchange = () => {
+	// 	const selectedFile = fileInput.files[0];
+	// 	console.log(selectedFile);
+	// };
 </script>
 
 <input type="file" id="input" />
