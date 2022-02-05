@@ -34,6 +34,8 @@
 	let lineHeight = 60;
 	let text;
 
+	let debugUI = false;
+
 	onMount(() => {
 		client = io('http://localhost:4200');
 
@@ -88,6 +90,7 @@
 		{#each text.split(' ') as word, i}
 			<span
 				class:active={i === activeWordNumber}
+				class:debugUI
 				class:word-before-wrap={softLines.some((word) => word.lastWordIndex === i)}
 			>
 				{word}
@@ -123,10 +126,13 @@
 
 	.active {
 		color: black;
+	}
+
+	.active.debugUI {
 		position: relative;
 	}
 
-	.active::after {
+	.active::after.debugUI {
 		position: absolute;
 		content: '';
 		width: 100vw;
@@ -135,11 +141,11 @@
 		left: 0;
 	}
 
-	.word-before-wrap {
+	.word-before-wrap.debugUI {
 		position: relative;
 	}
 
-	.word-before-wrap::before {
+	.word-before-wrap::before.debugUI {
 		position: absolute;
 		content: '|';
 		color: blue;
