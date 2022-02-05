@@ -1,2 +1,9 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+    import {io } from 'socket.io-client';
+   const client =  io('http://localhost:420');
+   client.connect();
+   client.onAny(function(event,data){
+       console.log("Data",event,data);
+   });
+</script>
+<h1>Header</h1>
