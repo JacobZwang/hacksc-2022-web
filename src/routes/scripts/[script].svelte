@@ -87,7 +87,7 @@
 
 {#if connectionStatus === ConnectionStatus.JoinedRoom}
 	<div bind:this={textElement} style:line-height={lineHeight + 'px'}>
-		{#each text.split(' ') as word, i}
+		{#each text.split(/([\n\r\s]+)/g) as word, i}
 			<span
 				class:active={i === activeWordNumber}
 				class:debugUI
@@ -116,6 +116,7 @@
 <style>
 	div {
 		padding: 50vh 20pt;
+		white-space: pre-line;
 	}
 
 	span {
