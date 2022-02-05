@@ -67,18 +67,20 @@
 
 <svelte:window
 	on:scroll={(e) => {
-		const offset = softLines[0].top;
+		const offset = softLines[0]?.top ?? 0;
 		const currentLine = softLines.find((line) => {
 			return line.top >= window.scrollY + offset && line.bottom >= window.scrollY + offset;
 		});
 
-		activeWordNumber =
-			currentLine.firstWordIndex +
-			Math.floor(
-				currentLine.wordCount *
-					(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
-			);
-		// console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
+		if (currentLine?.firstWordIndex) {
+			activeWordNumber =
+				currentLine?.firstWordIndex +
+				Math.floor(
+					currentLine.wordCount *
+						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
+				);
+		}
+		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
 	on:resize={() => {
 		softLines = findLineWraps(textElement, lineHeight);
@@ -87,13 +89,13 @@
 
 {#if connectionStatus === ConnectionStatus.JoinedRoom}
 	<div bind:this={textElement} style:line-height={lineHeight + 'px'}>
-		{#each text.split(/([\n\r\s]+)/g) as word, i}
+		{#each text.split(' ') as word, i}
 			<span
 				class:active={i === activeWordNumber}
 				class:debugUI
 				class:word-before-wrap={softLines.some((word) => word.lastWordIndex === i)}
 			>
-				{word}
+				<span style="color: blue;">{i}</span>{word}
 			</span>
 		{/each}
 	</div>
@@ -116,7 +118,7 @@
 <style>
 	div {
 		padding: 50vh 20pt;
-		white-space: pre-line;
+		/* white-space: pre-line; */
 	}
 
 	span {
