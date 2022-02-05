@@ -35,20 +35,24 @@
 	let text;
 
 	onMount(() => {
-		const client = io('http://localhost:4200');
+		client = io('http://localhost:4200');
+
 		client.on('connect', function () {
 			console.log('Connected');
 			client.emit('joinRoom', scriptId);
 			connectionStatus = ConnectionStatus.Connected;
 		});
+
 		client.on('disconnect', function () {
 			console.log('Disconnected');
 			connectionStatus = ConnectionStatus.Disconnected;
 		});
+
 		client.on('connect_error', function (error) {
 			console.log('Error', error);
 			connectionStatus = ConnectionStatus.Error;
 		});
+
 		client.on('joinRoom', async function (data) {
 			console.log('Joined room', data);
 			text = data.text;
