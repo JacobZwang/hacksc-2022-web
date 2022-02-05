@@ -32,7 +32,7 @@
 	// });
 
 	let text;
-	const client = io('http://localhost:420');
+	const client = io('http://localhost:4200');
 	client.on('connect', function () {
 		console.log('Connected');
 		client.emit('joinRoom', scriptId);
