@@ -11,6 +11,8 @@
 </script>
 
 <script lang="ts">
+	import { browser } from '$app/env';
+
 	import { io } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
 	import { findLineWraps, WrappedLine } from './_lines';
@@ -33,6 +35,7 @@
 	let softLines: WrappedLine[] = [];
 	let lineHeight = 60;
 	let text;
+	let targetActiceWordNumber = 0;
 
 	let debugUI = false;
 
@@ -61,12 +64,32 @@
 			connectionStatus = ConnectionStatus.JoinedRoom;
 			await tick();
 			softLines = findLineWraps(textElement, lineHeight);
+
+			scroll();
 		});
 	});
+
+	$: if (browser) {
+		targetActiceWordNumber;
+		scroll();
+	}
+
+	function scroll() {
+		window.scrollTo(
+			0,
+			activeWordNumber < targetActiceWordNumber ? window.scrollY + 1 : window.scrollY - 1
+		);
+
+		if (activeWordNumber !== targetActiceWordNumber) {
+			requestAnimationFrame(() => {
+				scroll();
+			});
+		}
+	}
 </script>
 
 <svelte:window
-	on:scroll={(e) => {
+	on:scroll|preventDefault={(e) => {
 		const offset = softLines[0]?.top ?? 0;
 		const currentLine = softLines.find((line) => {
 			return line.top >= window.scrollY + offset && line.bottom >= window.scrollY + offset;
@@ -75,7 +98,7 @@
 		if (currentLine?.firstWordIndex) {
 			activeWordNumber =
 				currentLine?.firstWordIndex +
-				Math.floor(
+				Math.ceil(
 					currentLine.wordCount *
 						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
 				);
