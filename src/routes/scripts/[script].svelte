@@ -30,7 +30,7 @@
 
 	let activeWordNumber = 0;
 	let textElement: HTMLDivElement;
-	let softLines: WrappedLine;
+	let softLines: WrappedLine[];
 	let lineHeight = 60;
 	let text;
 
