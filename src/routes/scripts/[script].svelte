@@ -12,7 +12,7 @@
 
 <script lang="ts">
 	import { io } from 'socket.io-client';
-	import temp from './_temp.txt?raw';
+	// import temp from './_temp.txt?raw';
 	enum ConnectionStatus {
 		JoinedRoom,
 		Connecting,
@@ -26,6 +26,7 @@
 	// client.onAny(function (event, data) {
 	// 	console.log('Data', event, data);
 	// });
+	let text;
 	const client = io('http://localhost:420');
 	client.on('connect', function () {
 		console.log('Connected');
@@ -40,12 +41,13 @@
 		console.log('Error', error);
 		connectionStatus = ConnectionStatus.Error;
 	});
-	client.on('joinRoom', function () {
-		console.log('Joined room');
+	client.on('joinRoom', function (data) {
+		console.log('Joined room', data);
+		text = data.text;
 		connectionStatus = ConnectionStatus.JoinedRoom;
 	});
 
-	const text = temp;
+	//const text = temp;
 
 	let activeWordNumber = 0;
 </script>
