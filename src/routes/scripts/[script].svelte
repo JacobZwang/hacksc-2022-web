@@ -1,9 +1,23 @@
 <script lang="ts">
-	const text =
-		'Incididunt consectetur sunt exercitation adipisicing nisi dolore enim aliqua dolore exercitation. Minim ipsum amet adipisicing ut proident irure fugiat minim in aute veniam in exercitation. Reprehenderit pariatur cupidatat quis ex. Id esse adipisicing id occaecat excepteur veniam reprehenderit qui non.';
+	import { io } from 'socket.io-client';
+	import temp from './_temp.txt?raw';
 
-	let activeWordNumber = 5;
+	// const client = io('http://localhost:420');
+	// client.onAny(function (event, data) {
+	// 	console.log('Data', event, data);
+	// });
+
+	const text = temp;
+
+	let activeWordNumber = 0;
 </script>
+
+<svelte:window
+	on:scroll={(e) => {
+		activeWordNumber = Math.floor(window.scrollY / (40 * 1.5));
+		console.log(window.scrollY);
+	}}
+/>
 
 <div>
 	{#each text.split(' ') as word, i}
@@ -14,9 +28,14 @@
 </div>
 
 <style>
+	div {
+		padding-top: 50vh;
+	}
+
 	span {
-		color: rgb(104, 104, 104);
-		font-size: 30pt;
+		color: rgb(175, 175, 175);
+		font-size: 40px !important;
+		line-height: 1.5;
 		font-family: sans-serif;
 	}
 
