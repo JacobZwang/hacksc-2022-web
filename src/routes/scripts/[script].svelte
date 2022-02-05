@@ -80,6 +80,7 @@
 						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
 				);
 		}
+		console.log(currentLine);
 		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
 	on:resize={() => {
@@ -95,7 +96,7 @@
 				class:debugUI
 				class:word-before-wrap={softLines.some((word) => word.lastWordIndex === i)}
 			>
-				<span style="color: blue;">{i}</span>{word}
+				<!-- <span style="color: blue;">{i}</span> -->{word}
 			</span>
 		{/each}
 	</div>
