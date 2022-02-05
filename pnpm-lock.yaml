@@ -11,17 +11,23 @@ specifiers:
   eslint-plugin-svelte3: ^3.2.1
   prettier: ^2.4.1
   prettier-plugin-svelte: ^2.4.0
+  simple-xml-to-json: ^1.0.8
   socket.io-client: ^4.4.1
   svelte: ^3.44.0
   svelte-check: ^2.2.6
   svelte-preprocess: ^4.9.4
   tslib: ^2.3.1
   typescript: ^4.4.3
+  xml-js: ^1.6.11
+  xml2js: ^0.4.23
   xml2json: ^0.12.0
 
 dependencies:
   '@sveltejs/adapter-node': 1.0.0-next.67
+  simple-xml-to-json: 1.0.8
   socket.io-client: 4.4.1
+  xml-js: 1.6.11
+  xml2js: 0.4.23
   xml2json: 0.12.0
 
 devDependencies:
@@ -1510,6 +1516,10 @@ packages:
       rimraf: 2.7.1
     dev: true
 
+  /sax/1.2.4:
+    resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
+    dev: false
+
   /semver/7.3.5:
     resolution: {integrity: sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==}
     engines: {node: '>=10'}
@@ -1529,6 +1539,11 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
     dev: true
+
+  /simple-xml-to-json/1.0.8:
+    resolution: {integrity: sha512-AYL/JUAtwthLYm4Nb95nn4rzfE/aqYaut4IauUdIJ7q32PYjwvpNSVQJU8/s68hQ8GuQmUicAYtnt6MuS67IQg==}
+    engines: {node: '>=10.18.0'}
+    dev: false
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -1873,6 +1888,21 @@ packages:
         optional: true
     dev: false
 
+  /xml-js/1.6.11:
+    resolution: {integrity: sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==}
+    hasBin: true
+    dependencies:
+      sax: 1.2.4
+    dev: false
+
+  /xml2js/0.4.23:
+    resolution: {integrity: sha512-ySPiMjM0+pLDftHgXY4By0uswI3SPKLDw/i3UXbnO8M/p28zqexCUoPmQFrYD+/1BzhGJSs2i1ERWKJAtiLrug==}
+    engines: {node: '>=4.0.0'}
+    dependencies:
+      sax: 1.2.4
+      xmlbuilder: 11.0.1
+    dev: false
+
   /xml2json/0.12.0:
     resolution: {integrity: sha512-EPJHRWJnJUYbJlzR4pBhZODwWdi2IaYGtDdteJi0JpZ4OD31IplWALuit8r73dJuM4iHZdDVKY1tLqY2UICejg==}
     hasBin: true
@@ -1880,6 +1910,11 @@ packages:
       hoek: 4.2.1
       joi: 13.7.0
       node-expat: 2.4.0
+    dev: false
+
+  /xmlbuilder/11.0.1:
+    resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
+    engines: {node: '>=4.0'}
     dev: false
 
   /xmlhttprequest-ssl/2.0.0:
