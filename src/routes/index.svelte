@@ -1,7 +1,7 @@
 <script>
+
     import {io } from 'socket.io-client';
-   const client =  io('http://localhost:420');
-   client.connect();
+   const client = io('http://localhost:420');
    client.onAny(function(event,data){
        console.log("Data",event,data);
    });
