@@ -1,5 +1,9 @@
-<script lang="ts">
-	function uploadScript() {}
+<script>
+	import { io } from 'socket.io-client';
+	const client = io('http://localhost:420');
+	client.onAny(function (event, data) {
+		console.log('Data', event, data);
+	});
 </script>
 
-<input type="file" />
+<h1>Header</h1>
