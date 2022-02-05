@@ -115,13 +115,13 @@
 
 <style>
 	div {
-		padding-top: 50vh;
+		padding: 50vh 20pt;
 	}
 
 	span {
 		color: rgb(175, 175, 175);
-		font-size: 40px !important;
-		font-family: sans-serif;
+		font-size: 40px;
+		font-family: 'Courier New', Courier, monospace;
 	}
 
 	.active {
