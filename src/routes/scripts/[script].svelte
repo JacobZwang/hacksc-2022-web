@@ -12,7 +12,7 @@
 
 <script lang="ts">
 	import { io } from 'socket.io-client';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import temp from './_temp.txt?raw';
 
 	// import temp from './_temp.txt?raw';
@@ -26,43 +26,37 @@
 	let connectionStatus = ConnectionStatus.Connecting;
 	export let scriptId;
 
-	// const client = io('http://localhost:420');
-	// client.onAny(function (event, data) {
-	// 	console.log('Data', event, data);
-	// });
-
-	let text;
-	const client = io('http://localhost:4200');
-	client.on('connect', function () {
-		console.log('Connected');
-		client.emit('joinRoom', scriptId);
-		connectionStatus = ConnectionStatus.Connected;
-	});
-	client.on('disconnect', function () {
-		console.log('Disconnected');
-		connectionStatus = ConnectionStatus.Disconnected;
-	});
-	client.on('connect_error', function (error) {
-		console.log('Error', error);
-		connectionStatus = ConnectionStatus.Error;
-	});
-	client.on('joinRoom', function (data) {
-		console.log('Joined room', data);
-		text = data.text;
-		connectionStatus = ConnectionStatus.JoinedRoom;
-
-		softLines = findLineWraps();
-	});
-
-	//const text = temp;
+	let client;
 
 	let activeWordNumber = 0;
-
 	let textElement: HTMLDivElement;
-
 	let softLines = [];
-
 	let lineHeight = 60;
+	let text;
+
+	onMount(() => {
+		const client = io('http://localhost:4200');
+		client.on('connect', function () {
+			console.log('Connected');
+			client.emit('joinRoom', scriptId);
+			connectionStatus = ConnectionStatus.Connected;
+		});
+		client.on('disconnect', function () {
+			console.log('Disconnected');
+			connectionStatus = ConnectionStatus.Disconnected;
+		});
+		client.on('connect_error', function (error) {
+			console.log('Error', error);
+			connectionStatus = ConnectionStatus.Error;
+		});
+		client.on('joinRoom', async function (data) {
+			console.log('Joined room', data);
+			text = data.text;
+			connectionStatus = ConnectionStatus.JoinedRoom;
+			await tick();
+			softLines = findLineWraps();
+		});
+	});
 
 	function findLineWraps() {
 		return Array.from(textElement.children).reduce(
@@ -122,7 +116,7 @@
 			currentLine.firstWordIndex +
 			Math.floor(
 				currentLine.wordCount *
-					(1 - (currentLine.top - window.scrollY - offset) / lineHeight)
+					(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
 			);
 		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
@@ -171,6 +165,7 @@
 
 	.active {
 		color: black;
+		position: relative;
 	}
 
 	.active::after {
