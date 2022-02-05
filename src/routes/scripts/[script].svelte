@@ -30,7 +30,7 @@
 
 	let activeWordNumber = 0;
 	let textElement: HTMLDivElement;
-	let softLines: WrappedLine[];
+	let softLines: WrappedLine[] = [];
 	let lineHeight = 60;
 	let text;
 
@@ -75,7 +75,7 @@
 		// console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
 	on:resize={() => {
-		softLines = findLineWraps();
+		softLines = findLineWraps(textElement, lineHeight);
 	}}
 />
 
