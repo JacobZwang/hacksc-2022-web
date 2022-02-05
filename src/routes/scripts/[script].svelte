@@ -14,9 +14,7 @@
 	import { io } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
 	import { findLineWraps, WrappedLine } from './_lines';
-	import temp from './_temp.txt?raw';
 
-	// import temp from './_temp.txt?raw';
 	enum ConnectionStatus {
 		JoinedRoom,
 		Connecting,
@@ -24,6 +22,7 @@
 		Disconnected,
 		Error
 	}
+
 	let connectionStatus = ConnectionStatus.Connecting;
 	export let scriptId;
 

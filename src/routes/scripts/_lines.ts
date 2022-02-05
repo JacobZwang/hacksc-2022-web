@@ -1,5 +1,5 @@
-export function findLineWraps(textElement, lineHeight) {
-	return Array.from(textElement.children).reduce(
+export function findLineWraps(textElement, lineHeight): WrappedLine[] {
+	return Array.from(textElement.children).reduce<WrappedLine[]>(
 		(lines: WrappedLine[], word: HTMLElement, i) => {
 			const lastLine = lines[lines.length - 1];
 			const rect = word.getBoundingClientRect();
