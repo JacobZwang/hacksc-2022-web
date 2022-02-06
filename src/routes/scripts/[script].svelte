@@ -101,7 +101,7 @@
 	function scroll() {
 		if (targetActiceWordNumber === undefined) return;
 
-		if (Math.abs(activeWordNumber - targetActiceWordNumber) < 4) {
+		if (Math.abs(activeWordNumber - targetActiceWordNumber) < 6) {
 			targetActiceWordNumber = undefined;
 			return;
 		}
