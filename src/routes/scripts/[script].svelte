@@ -42,7 +42,7 @@
 	let debugUI = false;
 
 	onMount(() => {
-		client = io('https://hacksc-2022-socket-ry2a5ejena-wl.a.run.app:8080');
+		client = io('https://hacksc-2022-socket-ry2a5ejena-wl.a.run.app');
 		console.log('client', client);
 		client.on('connect', function () {
 			console.log('Connected');
