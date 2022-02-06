@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({ params }: LoadInput): Promise<LoadOutput> {
+	export async function load({ params, url }: LoadInput): Promise<LoadOutput> {
 		return {
 			props: {
-				scriptId: params.script
+				scriptId: params.script,
+				readOnly: url.searchParams.get('readOnly')
 			}
 		};
 	}
@@ -26,9 +27,14 @@
 		Error
 	}
 
+
 	let connectionStatus = ConnectionStatus.Connecting;
 	export let scriptId;
-
+	export let readOnly = false;
+	if(readOnly && browser)
+	{
+		document.body.style.overflow = 'hidden';
+	}
 	let client: Socket;
 
 	let activeWordNumber = 0;
@@ -46,7 +52,7 @@
 		console.log('client', client);
 		client.on('connect', function () {
 			console.log('Connected');
-			client.emit('joinRoom', {scriptId});
+			client.emit('joinRoom', { scriptId });
 			connectionStatus = ConnectionStatus.Connected;
 		});
 
@@ -90,11 +96,13 @@
 	}
 
 	function maybeEmitWordNumber() {
-		if (targetActiceWordNumber === undefined && activeWordNumber !== undefined) {
-			client.emit('active-word', {
-				word: activeWordNumber,
-				roomId: scriptId
-			});
+		if (!readOnly) {
+			if (targetActiceWordNumber === undefined && activeWordNumber !== undefined) {
+				client.emit('active-word', {
+					word: activeWordNumber,
+					roomId: scriptId
+				});
+			}
 		}
 	}
 
