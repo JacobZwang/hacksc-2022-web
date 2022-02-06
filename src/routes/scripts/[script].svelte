@@ -27,12 +27,10 @@
 		Error
 	}
 
-
 	let connectionStatus = ConnectionStatus.Connecting;
 	export let scriptId;
 	export let readOnly = false;
-	if(readOnly && browser)
-	{
+	if (readOnly && browser) {
 		document.body.style.overflow = 'hidden';
 	}
 	let client: Socket;
@@ -49,6 +47,7 @@
 
 	onMount(() => {
 		client = io('https://hacksc-2022-socket-ry2a5ejena-wl.a.run.app');
+		// client = io('localhost:4200');
 		console.log('client', client);
 		client.on('connect', function () {
 			console.log('Connected');
@@ -129,6 +128,7 @@
 	}
 
 	let interval;
+	// let ignoreLastSpace;
 </script>
 
 <svelte:window
@@ -137,16 +137,29 @@
 			window.scrollTo(0, window.scrollY + 2);
 		}, 40);
 	}}
-	on:keydown|preventDefault={() => {
-		interval = setInterval(() => {
-			window.scrollTo(0, window.scrollY + 2);
-		}, 40);
+	on:keydown={(e) => {
+		// if (e.key === ' ') {
+		// 	e.preventDefault();
+		// 	if (interval) {
+		// 		ignoreLastSpace = true;
+		// 		return;
+		// 	}
+		// 	interval = setInterval(() => {
+		// 		window.scrollTo(0, window.scrollY + 2);
+		// 	}, 40);
+		// }
 	}}
 	on:mouseup={() => {
 		clearInterval(interval);
 	}}
-	on:keyup|preventDefault={() => {
-		clearInterval(interval);
+	on:keyup={(e) => {
+		// if (e.key === ' ') {
+		// 	e.preventDefault();
+		// 	if (!ignoreLastSpace) {
+		// 		clearInterval(interval);
+		// 		ignoreLastSpace = false;
+		// 	}
+		// }
 	}}
 	on:scroll={(e) => {
 		const offset = softLines[0]?.top ?? 0;
@@ -157,11 +170,12 @@
 		});
 
 		if (currentLine?.firstWordIndex !== undefined) {
+			const lineHeight = currentLine.bottom - currentLine.top;
 			activeWordNumber = currentLine?.firstWordIndex; /* +
-				Math.ceil(
+				Math.round(
 					currentLine.wordCount *
-					(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
-					); */
+						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
+				); */
 		}
 		if (currentLine !== undefined) {
 			activeSoftLine = currentLine;
@@ -173,6 +187,17 @@
 		softLines = findLineWraps(textElement, lineHeight);
 	}}
 />
+
+<div
+	style="position: fixed; top: 5px; display: flex; padding-top: 8pt; padding-left:8pt; padding-right:8pt; left:-20px; background-color: #f7f7f7; border-radius: 4pt; transform: scale(0.75)"
+	class="menu"
+>
+	<label class="switch">
+		<input type="checkbox" bind:checked={debugUI} />
+		<span class="slider round" />
+	</label>
+	<span style="font-size: 30px; margin-left: 12pt;"> Debug UI </span>
+</div>
 
 {#if connectionStatus === ConnectionStatus.JoinedRoom}
 	<main bind:this={textElement} style:line-height={lineHeight + 'px'}>
@@ -207,6 +232,8 @@
 							);
 						})()}
 						class:debugUI
+						class:active-word={activeWordNumber ===
+							(script[i - 1]?.lastWordIndex ?? 0) + j + i + 1}
 						class:word-before-wrap={softLines.some(
 							(line) =>
 								line.lastWordIndex ===
@@ -216,7 +243,7 @@
 									1 /* i is to compensate for extra br element */
 						)}
 					>
-						{word + ' '}
+						<span class="word-index" class:debugUI>{i}:{j}</span>{word + ' '}
 					</span>
 				{/each}
 			{/if}
@@ -251,6 +278,7 @@
 		width: 100vw;
 		top: calc(50vh + 20pt);
 	}
+
 	main {
 		padding: 50vh 20pt;
 		word-wrap: unset;
@@ -263,6 +291,10 @@
 		font-size: 40px;
 		font-family: 'Courier New', Courier, monospace;
 		transition: color 200ms;
+	}
+
+	.active-word.debugUI {
+		font-weight: bold !important;
 	}
 
 	.active-part {
@@ -279,6 +311,16 @@
 		transition: 1000ms;
 	}
 
+	.word-index {
+		display: none;
+	}
+
+	.word-index.debugUI {
+		display: inline;
+		font-size: 16px;
+		color: blue;
+	}
+
 	/* .active::after {
 		position: absolute;
 		content: '';
@@ -288,9 +330,13 @@
 		left: 0;
 	} */
 
-	/* .word-before-wrap {
+	.debugUI {
+		background: transparent;
+	}
+
+	.word-before-wrap.debugUI {
 		color: red;
-	} */
+	}
 
 	span.action {
 		font-weight: normal;
@@ -311,6 +357,12 @@
 		display: block;
 	}
 
+	@media only screen and (max-width: 500px) {
+		.menu {
+			display: none;
+		}
+	}
+
 	/* .word-before-wrap::before {
 		position: absolute;
 		content: '|';
@@ -318,4 +370,67 @@
 		right: 0;
 		margin-right: -5px;
 	} */
+
+	/* The switch - the box around the slider */
+	.switch {
+		position: relative;
+		display: inline-block;
+		width: 60px;
+		height: 34px;
+	}
+
+	/* Hide default HTML checkbox */
+	.switch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	/* The slider */
+	.slider {
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ccc;
+		-webkit-transition: 0.2s;
+		transition: 0.2s;
+	}
+
+	.slider:before {
+		position: absolute;
+		content: '';
+		height: 26px;
+		width: 26px;
+		left: 4px;
+		bottom: 4px;
+		background-color: white;
+		-webkit-transition: 0.2s;
+		transition: 0.2s;
+	}
+
+	input:checked + .slider {
+		background-color: #2196f3;
+	}
+
+	input:focus + .slider {
+		box-shadow: 0 0 1px #2196f3;
+	}
+
+	input:checked + .slider:before {
+		-webkit-transform: translateX(26px);
+		-ms-transform: translateX(26px);
+		transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+		border-radius: 34px;
+	}
+
+	.slider.round:before {
+		border-radius: 50%;
+	}
 </style>
