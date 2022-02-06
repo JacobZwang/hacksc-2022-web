@@ -16,7 +16,7 @@
 	import { io, Socket } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
 	import { findLineWraps, WrappedLine } from './_lines';
-	import { ScriptPart, ScriptType } from '../../../../hacksc-2022-socket/schema/script';
+	import { ScriptPart, ScriptType } from './script';
 
 	enum ConnectionStatus {
 		JoinedRoom,
@@ -42,7 +42,7 @@
 	let debugUI = false;
 
 	onMount(() => {
-		client = io('http://localhost:4200');
+		client = io('https://hacksc-2022-socket-ry2a5ejena-wl.a.run.app:4200');
 
 		client.on('connect', function () {
 			console.log('Connected');
