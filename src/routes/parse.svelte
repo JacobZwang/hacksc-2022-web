@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
+
 
 	import { onMount } from 'svelte';
 
@@ -30,7 +32,14 @@
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({ data: val })
-				});
+				}).then((data) => {
+					var direct = file.name.split(".")[0]
+					console.log(data.json())
+
+					goto(`/scripts/${direct}`) 
+				}
+				
+				)
 			});
 		}
 	}
