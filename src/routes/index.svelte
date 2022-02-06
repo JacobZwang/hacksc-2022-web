@@ -50,5 +50,44 @@
 	}
 </script>
 
-<h1>Select a File</h1>
-<input bind:files id="avatar" name="avatar" type="file" />
+<div class="mainContainer">
+	<div class="main">
+		<h1>Script<span style="color:gray">Us</span></h1>
+		<p>Upload a Script</p>
+		<input bind:files id="avatar" name="avatar" type="file" />
+	</div>
+</div>
+
+<style>
+    * {
+        font-family: 'Courier New', Courier, monospace;
+
+    }
+	.mainContainer {
+		height: 100vh;
+		width: 100%;
+		display: flex;
+
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	#avatar {
+		top: 150px;
+		width: 150px;
+		padding: 10px;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border: 1px dashed #bbb;
+		text-align: center;
+		background-color: #ddd;
+		cursor: pointer;
+	}
+	.main {
+		text-align: center;
+		border: 1px solid gray;
+		border-radius: 10px;
+		padding: 10px;
+	}
+</style>
