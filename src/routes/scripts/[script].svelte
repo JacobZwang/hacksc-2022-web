@@ -13,7 +13,7 @@
 <script lang="ts">
 	import { browser } from '$app/env';
 
-	import { io } from 'socket.io-client';
+	import { io, Socket } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
 	import { findLineWraps, WrappedLine } from './_lines';
 	import { ScriptPart, ScriptType } from '../../../../hacksc-2022-socket/schema/script';
@@ -29,7 +29,7 @@
 	let connectionStatus = ConnectionStatus.Connecting;
 	export let scriptId;
 
-	let client;
+	let client: Socket;
 
 	let activeWordNumber = 0;
 	let activeSoftLine = 0;
@@ -75,14 +75,29 @@
 			}
 			scroll();
 		});
+
+		client.on('active-word', (data) => {
+			data && (targetActiceWordNumber = data);
+		});
 	});
 
-	$: if (browser) {
-		targetActiceWordNumber;
+	$: if (browser && targetActiceWordNumber !== undefined) {
 		scroll();
 	}
 
+	$: if (browser && activeWordNumber !== undefined && client) {
+		maybeEmitWordNumber();
+	}
+
+	function maybeEmitWordNumber() {
+		if (targetActiceWordNumber === undefined && activeWordNumber !== undefined) {
+			client.emit('active-word', activeWordNumber);
+		}
+	}
+
 	function scroll() {
+		if (targetActiceWordNumber === undefined) return;
+
 		window.scrollTo(
 			0,
 			activeWordNumber < targetActiceWordNumber ? window.scrollY + 1 : window.scrollY - 1
@@ -92,6 +107,8 @@
 			requestAnimationFrame(() => {
 				scroll();
 			});
+		} else {
+			targetActiceWordNumber = undefined;
 		}
 	}
 </script>
@@ -109,15 +126,14 @@
 			activeWordNumber = currentLine?.firstWordIndex; /* +
 				Math.ceil(
 					currentLine.wordCount *
-						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
-				); */
+					(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
+					); */
 		}
 		if (currentLine !== undefined) {
 			activeSoftLine = currentLine;
 		}
 
-		console.log(currentLine);
-		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
+		// console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
 	on:resize={() => {
 		softLines = findLineWraps(textElement, lineHeight);
