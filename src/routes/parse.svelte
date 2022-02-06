@@ -44,7 +44,7 @@ import { io } from 'socket.io-client';
 						script: json,
 						scene: direct
 					});
-
+					goto('/scripts/' + direct);
 				}
 				
 				)
