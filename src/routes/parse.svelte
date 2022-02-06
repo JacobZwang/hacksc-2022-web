@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
+import { io } from 'socket.io-client';
 
 
 	import { onMount } from 'svelte';
@@ -32,11 +33,18 @@
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({ data: val })
-				}).then((data) => {
+				}).then(async (data) => {
 					var direct = file.name.split(".")[0]
-					console.log(data.json())
+					const json = await data.json();
+					console.log(json)
 
-					goto(`/scripts/${direct}`) 
+					const client = io('https://hacksc-2022-socket-ry2a5ejena-wl.a.run.app');
+					console.log("await", json, direct)
+					client.emit('post', {
+						script: json,
+						scene: direct
+					});
+
 				}
 				
 				)
