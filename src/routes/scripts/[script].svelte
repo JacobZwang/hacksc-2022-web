@@ -46,7 +46,7 @@
 		console.log('client', client);
 		client.on('connect', function () {
 			console.log('Connected');
-			client.emit('joinRoom', scriptId);
+			client.emit('joinRoom', {scriptId});
 			connectionStatus = ConnectionStatus.Connected;
 		});
 
