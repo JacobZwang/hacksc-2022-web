@@ -133,13 +133,11 @@
 			{:else}
 				{#each part.Text.split(' ') as word, j}
 					<span
+						class:dialogue={part.Type === ScriptType['Dialogue']}
 						class:scene={part.Type === ScriptType['Scene Heading']}
 						class:action={part.Type === ScriptType['Action']}
-						class:active={(script[i - 1]?.lastWordIndex ?? 0) +
-							j +
-							i +
-							1 /* i is to compensate for extra br element */ ===
-							activeWordNumber}
+						class:active={activeWordNumber <= script[i].lastWordIndex &&
+							activeWordNumber > (script[i - 1]?.lastWordIndex ?? 0)}
 						class:debugUI
 						class:word-before-wrap={softLines.some(
 							(line) =>
@@ -189,22 +187,22 @@
 		color: black;
 	}
 
-	.active::after {
+	/* .active::after {
 		position: absolute;
 		content: '';
 		width: 100vw;
 		height: 2px;
 		background-color: brown;
 		left: 0;
-	}
+	} */
 
-	.word-before-wrap {
-		/* position: relative; */
+	/* .word-before-wrap {
 		color: red;
-	}
+	} */
 
 	span.action {
 		font-weight: normal;
+		font-style: italic;
 	}
 
 	span.scene {
