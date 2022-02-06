@@ -32,6 +32,7 @@
 	let client;
 
 	let activeWordNumber = 0;
+	let activeSoftLine = 0;
 	let textElement: HTMLDivElement;
 	let softLines: WrappedLine[] = [];
 	let lineHeight = 60;
@@ -64,6 +65,7 @@
 			script = data.script;
 			connectionStatus = ConnectionStatus.JoinedRoom;
 			await tick();
+
 			softLines = findLineWraps(textElement, lineHeight);
 
 			for (let i = 0, total = 0; i < script.length; i++) {
@@ -110,6 +112,10 @@
 						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
 				); */
 		}
+		if (currentLine !== undefined) {
+			activeSoftLine = currentLine;
+		}
+
 		console.log(currentLine);
 		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
 	}}
@@ -136,8 +142,20 @@
 						class:dialogue={part.Type === ScriptType['Dialogue']}
 						class:scene={part.Type === ScriptType['Scene Heading']}
 						class:action={part.Type === ScriptType['Action']}
-						class:active={activeWordNumber <= script[i].lastWordIndex &&
+						class:active-part={activeWordNumber <= script[i].lastWordIndex &&
 							activeWordNumber > (script[i - 1]?.lastWordIndex ?? 0)}
+						class:active-line={(() => {
+							const index =
+								(script[i - 1]?.lastWordIndex ?? 0) +
+								j +
+								i +
+								1; /* i is to compensate for extra br element */
+
+							return (
+								index <= (activeSoftLine?.lastWordIndex ?? 0) &&
+								index >= (activeSoftLine?.firstWordIndex ?? 0)
+							);
+						})()}
 						class:debugUI
 						class:word-before-wrap={softLines.some(
 							(line) =>
@@ -183,8 +201,12 @@
 		font-family: 'Courier New', Courier, monospace;
 	}
 
-	.active {
+	.active-part {
 		color: black;
+	}
+
+	.active-line {
+		color: rgb(0, 0, 224);
 	}
 
 	/* .active::after {
