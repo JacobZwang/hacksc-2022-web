@@ -199,14 +199,20 @@
 		color: rgb(175, 175, 175);
 		font-size: 40px;
 		font-family: 'Courier New', Courier, monospace;
+		transition: color 200ms;
 	}
 
 	.active-part {
 		color: black;
+		text-decoration-color: transparent;
+		transition: 1000ms;
 	}
 
 	.active-line {
-		color: rgb(0, 0, 224);
+		/* color: rgb(0, 0, 0); */
+		text-decoration: underline;
+		text-decoration-color: rgb(42, 136, 165);
+		transition: 1000ms;
 	}
 
 	/* .active::after {
