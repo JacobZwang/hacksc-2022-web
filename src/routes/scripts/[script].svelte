@@ -16,6 +16,7 @@
 	import { io } from 'socket.io-client';
 	import { onMount, tick } from 'svelte';
 	import { findLineWraps, WrappedLine } from './_lines';
+	import { ScriptPart, ScriptType } from '../../../../hacksc-2022-socket/schema/script';
 
 	enum ConnectionStatus {
 		JoinedRoom,
@@ -34,7 +35,7 @@
 	let textElement: HTMLDivElement;
 	let softLines: WrappedLine[] = [];
 	let lineHeight = 60;
-	let text;
+	let script: ScriptPart[];
 	let targetActiceWordNumber = 0;
 
 	let debugUI = false;
@@ -60,11 +61,16 @@
 
 		client.on('joinRoom', async function (data) {
 			console.log('Joined room', data);
-			text = data.text;
+			script = data.script;
 			connectionStatus = ConnectionStatus.JoinedRoom;
 			await tick();
 			softLines = findLineWraps(textElement, lineHeight);
 
+			for (let i = 0, total = 0; i < script.length; i++) {
+				total += script[i].Text.split(' ').length;
+				console.log(total);
+				script[i].lastWordIndex = total;
+			}
 			scroll();
 		});
 	});
@@ -92,16 +98,17 @@
 	on:scroll|preventDefault={(e) => {
 		const offset = softLines[0]?.top ?? 0;
 		const currentLine = softLines.find((line) => {
-			return line.top >= window.scrollY + offset && line.bottom >= window.scrollY + offset;
+			const half = (line.bottom - line.top) / 2;
+			const middle = line.top + half;
+			return Math.abs(window.scrollY + offset - middle) <= half;
 		});
 
-		if (currentLine?.firstWordIndex) {
-			activeWordNumber =
-				currentLine?.firstWordIndex +
+		if (currentLine?.firstWordIndex !== undefined) {
+			activeWordNumber = currentLine?.firstWordIndex; /* +
 				Math.ceil(
 					currentLine.wordCount *
 						(1 - (currentLine.top - window.scrollY - offset + lineHeight) / lineHeight)
-				);
+				); */
 		}
 		console.log(currentLine);
 		console.log(`${softLines.indexOf(currentLine)}:${activeWordNumber}`);
@@ -112,17 +119,43 @@
 />
 
 {#if connectionStatus === ConnectionStatus.JoinedRoom}
-	<div bind:this={textElement} style:line-height={lineHeight + 'px'}>
-		{#each text.split(' ') as word, i}
-			<span
-				class:active={i === activeWordNumber}
-				class:debugUI
-				class:word-before-wrap={softLines.some((word) => word.lastWordIndex === i)}
-			>
-				<!-- <span style="color: blue;">{i}</span> -->{word}
-			</span>
+	<main bind:this={textElement} style:line-height={lineHeight + 'px'}>
+		{#each script as part, i}
+			<div
+				class="reset"
+				class:scene={part.Type === ScriptType['Scene Heading']}
+				class:action={part.Type === ScriptType['Action']}
+			/>
+			{#if part.Type === ScriptType['Character']}
+				<span class="charachter">
+					{part.Text}
+				</span>
+			{:else}
+				{#each part.Text.split(' ') as word, j}
+					<span
+						class:scene={part.Type === ScriptType['Scene Heading']}
+						class:action={part.Type === ScriptType['Action']}
+						class:active={(script[i - 1]?.lastWordIndex ?? 0) +
+							j +
+							i +
+							1 /* i is to compensate for extra br element */ ===
+							activeWordNumber}
+						class:debugUI
+						class:word-before-wrap={softLines.some(
+							(line) =>
+								line.lastWordIndex ===
+								(script[i - 1]?.lastWordIndex ?? 0) +
+									j +
+									i +
+									1 /* i is to compensate for extra br element */
+						)}
+					>
+						{word + ' '}
+					</span>
+				{/each}
+			{/if}
 		{/each}
-	</div>
+	</main>
 {:else if connectionStatus === ConnectionStatus.Connected}
 	<p>Joining Room #{scriptId}</p>
 {:else if connectionStatus === ConnectionStatus.Connecting}
@@ -140,8 +173,9 @@
 {/if}
 
 <style>
-	div {
+	main {
 		padding: 50vh 20pt;
+		word-wrap: unset;
 		/* white-space: pre-line; */
 	}
 
@@ -155,11 +189,7 @@
 		color: black;
 	}
 
-	.active.debugUI {
-		position: relative;
-	}
-
-	.active::after.debugUI {
+	.active::after {
 		position: absolute;
 		content: '';
 		width: 100vw;
@@ -168,15 +198,34 @@
 		left: 0;
 	}
 
-	.word-before-wrap.debugUI {
-		position: relative;
+	.word-before-wrap {
+		/* position: relative; */
+		color: red;
 	}
 
-	.word-before-wrap::before.debugUI {
+	span.action {
+		font-weight: normal;
+	}
+
+	span.scene {
+		font-weight: bold;
+	}
+
+	div {
+		height: 40pt;
+	}
+
+	.charachter {
+		width: 100%;
+		text-align: center;
+		display: block;
+	}
+
+	/* .word-before-wrap::before {
 		position: absolute;
 		content: '|';
 		color: blue;
 		right: 0;
 		margin-right: -5px;
-	}
+	} */
 </style>

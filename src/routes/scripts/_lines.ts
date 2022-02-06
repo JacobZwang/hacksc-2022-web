@@ -5,7 +5,7 @@ export function findLineWraps(textElement, lineHeight): WrappedLine[] {
 			const rect = word.getBoundingClientRect();
 			// const wordHeight = rect.bottom - rect.top;
 
-			if (lastLine.top === word.getBoundingClientRect().top + window.scrollY) {
+			if (lastLine?.top === word.getBoundingClientRect().top + window.scrollY) {
 				lastLine.wordCount += 1;
 				lastLine.lastWordIndex = i;
 			} else {
@@ -22,17 +22,14 @@ export function findLineWraps(textElement, lineHeight): WrappedLine[] {
 			return lines;
 		},
 		[
-			{
-				top: textElement.children[0].getBoundingClientRect().top + window.scrollY,
-				bottom:
-					textElement.children[0].getBoundingClientRect().top +
-					window.scrollY +
-					lineHeight / 2,
-				wordCount: 0,
-				lastWordIndex: 0,
-				firstWordIndex: 0
-				// lineHeight: 0
-			}
+			// {
+			// 	top: textElement.children[0].getBoundingClientRect().top + window.scrollY,
+			// 	bottom: textElement.children[0].getBoundingClientRect().bottom + window.scrollY,
+			// 	wordCount: 0,
+			// 	lastWordIndex: 0,
+			// 	firstWordIndex: 0
+			// 	// lineHeight: 0
+			// }
 		]
 	);
 }
