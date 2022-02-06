@@ -98,6 +98,11 @@
 	function scroll() {
 		if (targetActiceWordNumber === undefined) return;
 
+		if (Math.abs(activeWordNumber - targetActiceWordNumber) < 5) {
+			targetActiceWordNumber = undefined;
+			return;
+		}
+
 		window.scrollTo(
 			0,
 			activeWordNumber < targetActiceWordNumber ? window.scrollY + 1 : window.scrollY - 1
