@@ -11,11 +11,6 @@
         console.log('disconnected');
     });
 
-    client.on('scroll', (data: any) => {
-        console.log(data);
-        scrollY = data;
-    });
-
 	client.onAny(function (event, data) {
 		// console.log('Data', event, data);
 	});

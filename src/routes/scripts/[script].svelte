@@ -91,7 +91,10 @@
 
 	function maybeEmitWordNumber() {
 		if (targetActiceWordNumber === undefined && activeWordNumber !== undefined) {
-			client.emit('active-word', activeWordNumber);
+			client.emit('active-word', {
+				word: activeWordNumber,
+				roomId: scriptId
+			});
 		}
 	}
 
