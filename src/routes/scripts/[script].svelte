@@ -35,7 +35,7 @@
 	let activeSoftLine = 0;
 	let textElement: HTMLDivElement;
 	let softLines: WrappedLine[] = [];
-	let lineHeight = 60;
+	let lineHeight = 70;
 	let script: ScriptPart[];
 	let targetActiceWordNumber = 0;
 
@@ -98,7 +98,7 @@
 	function scroll() {
 		if (targetActiceWordNumber === undefined) return;
 
-		if (Math.abs(activeWordNumber - targetActiceWordNumber) < 5) {
+		if (Math.abs(activeWordNumber - targetActiceWordNumber) < 4) {
 			targetActiceWordNumber = undefined;
 			return;
 		}
@@ -116,10 +116,28 @@
 			targetActiceWordNumber = undefined;
 		}
 	}
+
+	let interval;
 </script>
 
 <svelte:window
-	on:scroll|preventDefault={(e) => {
+	on:mousedown|preventDefault={() => {
+		interval = setInterval(() => {
+			window.scrollTo(0, window.scrollY + 2);
+		}, 40);
+	}}
+	on:keydown|preventDefault={() => {
+		interval = setInterval(() => {
+			window.scrollTo(0, window.scrollY + 2);
+		}, 40);
+	}}
+	on:mouseup={() => {
+		clearInterval(interval);
+	}}
+	on:keyup|preventDefault={() => {
+		clearInterval(interval);
+	}}
+	on:scroll={(e) => {
 		const offset = softLines[0]?.top ?? 0;
 		const currentLine = softLines.find((line) => {
 			const half = (line.bottom - line.top) / 2;
@@ -193,6 +211,7 @@
 			{/if}
 		{/each}
 	</main>
+	<!-- <div class="line-bar" /> -->
 {:else if connectionStatus === ConnectionStatus.Connected}
 	<p>Joining Room #{scriptId}</p>
 {:else if connectionStatus === ConnectionStatus.Connecting}
@@ -210,9 +229,21 @@
 {/if}
 
 <style>
+	/* :global(body) {
+		overflow: hidden;
+	} */
+
+	.line-bar {
+		position: fixed;
+		height: 2px;
+		background-color: aquamarine;
+		width: 100vw;
+		top: calc(50vh + 20pt);
+	}
 	main {
 		padding: 50vh 20pt;
 		word-wrap: unset;
+		cursor: pointer;
 		/* white-space: pre-line; */
 	}
 
@@ -233,6 +264,7 @@
 		/* color: rgb(0, 0, 0); */
 		text-decoration: underline;
 		text-decoration-color: rgb(42, 136, 165);
+		/* font-weight: bold !important; */
 		transition: 1000ms;
 	}
 
