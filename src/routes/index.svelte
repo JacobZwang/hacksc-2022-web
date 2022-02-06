@@ -22,7 +22,7 @@
 
     
 
-	//const fileInput = document.getElementById('input') as HTMLInputElement;
+	// const fileInput = document.getElementById('input') as HTMLInputElement;
 	// fileInput.onchange = () => {
 	// 	const selectedFile = fileInput.files[0];
 	// 	console.log(selectedFile);
